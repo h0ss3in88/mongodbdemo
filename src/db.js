@@ -274,8 +274,6 @@ export class Db {
     updateUserDoc(criteria, item) {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(criteria);
-                console.log(item);
                 const updateResult = await this.db.collection("users").updateOne(criteria, { '$set' : item });
                 return resolve(updateResult);
             }catch(error) {
@@ -283,19 +281,36 @@ export class Db {
             }
         });
     }
+    updateUserByUnset(criteria, item) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const updateResult = await this.db.collection("users").updateOne(criteria, { '$unset' : item });
+                return resolve(updateResult);
+            }catch(error) {
+                return reject(error);
+            }
+        });       
+    }
     findUserByMixCriteria(id, age, gender) {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(age);
-                console.log(gender);
                 const findResult = await this.db.collection("users").find(
                     { _id : id , 'age' : age }
                 ).toArray();
-                console.log(findResult);
                 return resolve(findResult);
             }catch(error) {
                 return reject(error);
             }
         });
+    }
+    updateArrayUserDoc(criteria, item) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const updateResult = await this.db.collection("users").updateOne(criteria,  item);
+                return resolve(updateResult);
+            }catch(error) {
+                return reject(error);
+            }
+        }); 
     }
 }
