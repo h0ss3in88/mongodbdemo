@@ -249,4 +249,53 @@ export class Db {
             }
         });
     }
+    insertOneDocument(collectionName, item) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                const insertionResult = await this.db.collection(collectionName).insertOne(item);
+                return resolve(insertionResult);
+            }catch(error) {
+                return reject(error);
+            }
+        });
+    }
+    updateUserById(id, item) {
+        return new Promise(async(resolve, reject) => {
+            try {
+                const updateResult = await this.db.collection("users").updateOne({
+                    '_id' : id 
+                }, { '$set' : item});
+                return resolve(updateResult);
+            }catch(err) {
+                return reject(err);
+            }
+        });
+    }
+    updateUserDoc(criteria, item) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                console.log(criteria);
+                console.log(item);
+                const updateResult = await this.db.collection("users").updateOne(criteria, { '$set' : item });
+                return resolve(updateResult);
+            }catch(error) {
+                return reject(error);
+            }
+        });
+    }
+    findUserByMixCriteria(id, age, gender) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                console.log(age);
+                console.log(gender);
+                const findResult = await this.db.collection("users").find(
+                    { _id : id , 'age' : age }
+                ).toArray();
+                console.log(findResult);
+                return resolve(findResult);
+            }catch(error) {
+                return reject(error);
+            }
+        });
+    }
 }
