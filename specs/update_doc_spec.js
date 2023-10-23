@@ -58,8 +58,50 @@ describe('Mongodb CRUD Operation', function() {
         });
         it('update an user\'s gender and age successfully' , async () => {
             try {
-                console.log(id);
                 const updateResult = await db.updateUserDoc({ '$and' : [ {'_id' : id } , {'gender' : 'male'}, {'age' : 31 }] }, { 'age' : 30 , 'gender' : 'female' });
+                should(updateResult.acknowledged).be.equal(true);
+                should(updateResult.modifiedCount).be.equal(1);
+                should(updateResult.matchedCount).be.equal(1);
+            } catch (error) {
+                should.not.exists(error);
+            }
+        });
+        it('update an user by adding profile successfully' , async () => {
+            try {
+                const updateResult = await db.updateUserDoc({ '$and' : [ {'_id' : id } , {'gender' : 'female'}, {'age' : 30 }] }, { 'profile' : { 'email' : 'test@test.com' } });
+                should(updateResult.acknowledged).be.equal(true);
+                should(updateResult.modifiedCount).be.equal(1);
+                should(updateResult.matchedCount).be.equal(1);
+            } catch (error) {
+                should.not.exists(error);
+            }
+        });
+
+        it('update an user by adding array of favorites movies successfully' , async () => {
+            try {
+                const updateResult = await db.updateUserDoc({ 'profile.email' : 'test@test.com' }, { 'favorites' : { 'movies' : ['Casablanca', 'For a Few Dollars More', 'The Sting'] } });
+                should(updateResult.acknowledged).be.equal(true);
+                should(updateResult.modifiedCount).be.equal(1);
+                should(updateResult.matchedCount).be.equal(1);
+            } catch (error) {
+                should.not.exists(error);
+            }
+        });
+        
+        it('update an user\'s favorites movies by adding new movie successfully' , async () => {
+            try {
+                const updateResult = await db.updateArrayUserDoc({ 'favorites.movies' : 'Casablanca' }, { '$addToSet' : { 'favorites.movies' : 'The Maltese Falcon' } });
+                should(updateResult.acknowledged).be.equal(true);
+                should(updateResult.modifiedCount).be.equal(1);
+                should(updateResult.matchedCount).be.equal(1);
+            } catch (error) {
+                should.not.exists(error);
+            }
+        });
+
+        it('update an user by deleting profile successfully' , async () => {
+            try {
+                const updateResult = await db.updateUserByUnset({ '$and' : [ {'_id' : id } , {'gender' : 'female'}, {'age' : 30 }] }, { 'profile' : 1 });
                 should(updateResult.acknowledged).be.equal(true);
                 should(updateResult.modifiedCount).be.equal(1);
                 should(updateResult.matchedCount).be.equal(1);
